@@ -1,0 +1,13 @@
+---
+title: "JSC370 Final Project"
+author: "Nevin Tsui"
+jupyter: python3
+execute:
+  warning: false
+  message: false
+  echo: false
+---
+
+
+
+This is my website for the upcoming JSC370 Final Project.

@@ -1,0 +1,26 @@
+project:
+  type: website
+  output-dir: "."
+
+website:
+  title: "Nevin Tsui"
+  navbar:
+    left:
+      - text: "About"
+        href: index.qmd
+      - text: "JSC370 Final Project"
+        href: project/project.qmd
+    right:
+      - icon: github
+        href: https://github.com/nevin-11
+      - icon: linkedin
+        href: https://www.linkedin.com/in/nevin6/
+  page-footer:
+    center: "Copyright &copy; 2026 Nevin Tsui. All rights reserved."
+
+format:
+  html:
+    theme: darkly
+    toc: true
+    toc-float: true
+    css: styles.css

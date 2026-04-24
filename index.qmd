@@ -1,0 +1,6 @@
+---
+title: "About Me"
+author: "Nevin Tsui"
+---
+
+Hello! I'm Nevin, a computer science and statistic student with a passion for data science.
