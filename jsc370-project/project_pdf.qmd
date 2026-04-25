@@ -1,5 +1,5 @@
 ---
-title: "Predicting TTC Delay Durations"
+title: "Predicting TTC Subway Delay Lengths"
 author: "Nevin Tsui"
 date: "25 April 2026"
 
@@ -24,7 +24,7 @@ The Toronto Transit Commission (TTC) runs three heavy-rail subway lines: Line 1 
 
 The subway delays are captured on the Open Data portal of the City of Toronto, with the API documentation available [here](https://open.toronto.ca/dataset/ttc-subway-delay-data/). The data contains many variables, such as the time and location (i.e. which station) of the delays. We will focus on the 2025 subway delays, in particular their durations and causes.
 
-Also, to allow us to explore a potential relationship between geography and delay lengths, we will use an unofficial dataset containing the co-ordinates of subway stations. This data can be found on the *scruss* blog, specifically [here](https://scruss.com/blog/2005/12/14/toronto-subway-station-gps-locations), and is dated to 2005; we will also incorporate station co-ordinates for the Line 1 Vaughan extensions that only opened in 2017.
+Also, to allow us to explore a potential relationship between geography and delay lengths, we will use an unofficial dataset containing the co-ordinates of subway stations. This data can be found on the *We Saw a Chicken...* blog, specifically [here](https://scruss.com/blog/2005/12/14/toronto-subway-station-gps-locations), and is dated to 2005; we will also incorporate station co-ordinates for the Line 1 Vaughan extensions that only opened in 2017.
 
 Furthermore, the TTC has also published average weekday ridership data from September 2023 to August 2024 in PDF form [here](https://cdn.ttc.ca/-/media/Project/TTC/DevProto/Documents/Home/Transparency-and-accountability/Subway-Ridership-20232024.pdf?rev=4424b4bf53e443bd85031beab56649b7). We incorporate ridership into our analysis to give us a better idea of whether busier stations would have longer delays.
 
@@ -74,6 +74,7 @@ We will start by acquiring the 2025 subway delay data via the City of Toronto's 
 ```{python}
 # See https://open.toronto.ca/dataset/ttc-streetcar-delay-data/ (sic)
 #  and https://open.toronto.ca/dataset/ttc-subway-delay-data/ for documentation
+# Code below copied and/or adapted from https://open.toronto.ca/dataset/ttc-subway-delay-data/
 
 BASE_URL = "https://ckan0.cf.opendata.inter.prod-toronto.ca"
 
@@ -142,7 +143,7 @@ df.drop(
 )
 ```
 
-We then obtain the unofficial *scruss* station co-ordinate (longtitude and latitude) datasets via the links embedded in [this blog post](https://scruss.com/blog/2005/12/14/toronto-subway-station-gps-locations/). We then use Pandas' *read_csv* function to store the co-ordinates as Pandas dataframes, passing in one URL (i.e. one line) at a time.
+We then obtain the unofficial *scruss* station co-ordinate (longtitude and latitude) datasets via the links embedded in [this blog post](https://scruss.com/blog/2005/12/14/toronto-subway-station-gps-locations/) on the *We Saw a Chicken...* blog. We then use Pandas' *read_csv* function to store the co-ordinates as Pandas dataframes, passing in one URL (i.e. one line) at a time.
 
 We then use Google Maps to obtain the co-ordinates for the Line 1 Vaughan extension station. Finally, we concatenate the four sets of data (Line 1, Line 2, Line 4, and the Line 1 extension) into a single dataframe containing the co-ordinates of all heavy-rail TTC stations.
 
@@ -836,7 +837,7 @@ We will use the same set of metrics to compare the two delay-prediction models: 
 
 To ensure fairness in model-tuning, we will train the models on the same train-validation-test split (60% training, 20% each validation and testing); both models would receive the same training, validation, and test sets.
 
-We will then perform a grid search for the best hyperparameter: for each model, we will test four hyperparameters, trying out three values for each for a total of 81 combinations. Finally, the usage of the same metrics to compare the two models further guarantees the fairness of the comparison.
+We will then perform a grid search for the best hyperparameter combination: for each model, we will test four hyperparameters, trying out three values for each for a total of 81 combinations. Finally, the usage of the same metrics to compare the two models further guarantees the fairness of the comparison.
 
 ```{python}
 # Drop numerical versions of temporal attributes
@@ -941,7 +942,7 @@ In addition, the Kruskal-Wallis H-test for subway lines also has a extremely low
 
 We now use boxplots to visualize the two features (line and weekday-weekend difference) for which we have rejected the null hypotheses.
 
-We note that although the median delay length is five minutes within each subway line, their distributions significantly differ. Specifically, Line 4 Sheppard delays tend to be more concentrated about the five-minute median (hence its box on the boxplot being more narrow). Meanwhile, Line 2 Bloor-Danforth delays tend to have the widest (most dispersed) distribution, with short delays being more common on that line (since its first-quartile delay time of two minutes is lowest of the three lines). Finally, Line 1 Yonge-University seems to have many outlier delay times, since the boxplot shows many close-together dots (outliers) for that subway line.
+We note that although the median delay length is five minutes within each subway line, their distributions significantly differ. Specifically, Line 4 Sheppard delays tend to be more concentrated about the five-minute median (hence its box on the boxplot being more narrow). On the other hand, Line 1 Yonge-University seems to have many outlier delay times, since the boxplot shows many close-together dots (outliers) for that subway line.
 
 ```{python}
 #| label: fig-delay-lines
@@ -1151,9 +1152,9 @@ Markdown(
 )
 ```
 
-### Feature Importance and Interpretation
-
 We choose the random forest model since it performed better across all of the three pre-determined metrics: $R^2$, RMSE, and MAE.
+
+### Feature Importance and Interpretation
 
 ```{python}
 # See Week 8 Slide 54 (https://jsc370.github.io/JSC370-2026/slides/08-ml2/JSC370-slides-08.html#/xgboost-variable-importance) and https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.reset_index.html
