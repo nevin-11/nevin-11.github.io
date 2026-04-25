@@ -9,7 +9,7 @@ website:
       - text: "About"
         href: index.qmd
       - text: "JSC370 Final Project"
-        href: project/project.qmd
+        href: jsc370-project/project.qmd
     right:
       - icon: github
         href: https://github.com/nevin-11

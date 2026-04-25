@@ -1,0 +1,219 @@
+---
+title: "JSC370 Final Report: Grid Search"
+author: "Nevin Tsui"
+date: "21 April 2026"
+
+format:
+ html:
+  embed-resources: true
+jupyter: python3
+echo: false
+---
+
+```{python}
+import pandas as pd
+import numpy as np
+from xgboost import XGBRegressor
+from sklearn.model_selection import train_test_split
+
+# See https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html
+from sklearn.ensemble import RandomForestRegressor
+
+# See https://quarto.org/docs/authoring/tables.html
+from IPython.display import Markdown
+from tabulate import tabulate
+
+# See https://scikit-learn.org/stable/modules/generated/sklearn.metrics.mean_absolute_error.html
+from sklearn.metrics import mean_absolute_error, \
+  root_mean_squared_error, r2_score
+```
+
+We load the merged, cleaned, and split dataset.
+
+```{python}
+train_df = pd.read_csv('tuning/train.csv', index_col=[0])
+X_train = train_df.drop(['Min Delay'], axis=1)
+y_train = train_df['Min Delay']
+
+val_df = pd.read_csv('tuning/val.csv', index_col=[0])
+X_val = val_df.drop(['Min Delay'], axis=1)
+y_val = val_df['Min Delay']
+
+test_df = pd.read_csv('tuning/test.csv', index_col=[0])
+X_test = test_df.drop(['Min Delay'], axis=1)
+y_test = test_df['Min Delay']
+```
+
+# Random Forest
+
+We try several values of max_features, n_estimators, min_samples_split, and min_samples_leaf.
+
+```{python}
+rf_results = []
+
+for mf in ['sqrt', 1/3, 1/2]:
+  for ne in [100, 200, 500]:
+    for mss in [50, 100, 200]:
+      for msl in [1, 5, 10]:
+        rfr = RandomForestRegressor(
+          max_features=mf,
+          n_estimators=ne,
+          min_samples_split=mss,
+          min_samples_leaf=msl,
+          oob_score=True,
+          random_state=11
+        )
+
+        rfr.fit(X_train, y_train)
+        y_pred = rfr.predict(X_val)
+
+        rf_results.append({
+          'max_features': mf,
+          'n_estimators': ne,
+          'min_samples_split': mss,
+          'min_samples_leaf': msl,
+          'r2_score': r2_score(y_val, y_pred),
+          'rmse': root_mean_squared_error(y_val, y_pred),
+          'mae': mean_absolute_error(y_val, y_pred)
+        })
+```
+
+```{python}
+rf_df = pd.DataFrame(rf_results)
+rf_df.to_csv('tuning/rf_hp.csv')
+```
+
+We look at the settings yielding the best R^2 scores; unfortunately, the best R^2 score is 0.1324.
+
+```{python}
+#| label: tbl-best-r2
+#| tbl-cap: Hyperparameter combinations with the best R^2 scores
+
+rf_df.sort_values(['r2_score'], ascending=False, inplace=True)
+Markdown(rf_df.head(10).to_markdown(index=False))
+```
+
+We then examine the ten best models with respect to RMSE. We note that this list is identical to the above list of best-R^2 models.
+
+```{python}
+#| label: tbl-best-rmse
+#| tbl-cap: Hyperparameter combinations with the best RMSEs
+
+rf_df.sort_values(['rmse'], ascending=True, inplace=True)
+Markdown(rf_df.head(10).to_markdown(index=False))
+```
+
+Finally, we find the ten best settings in terms of MAE. We note that there are some differences this time with respect to the hyperparameter settings. We further note that the best-MAE model has an MAE of 3.6056 and an R^2 of 0.1319, whereas the best-R^2 (and also best-RMSE) model has an MAE of 3.7601 and 0.1324.
+
+Both models share a min_samples_split value of 50 and a min_samples_leaf value of 1. However, the best-R^2 model has an n_estimators value of 'sqrt' and a n_estimators value of 500, whereas the best-MAE model has 1/3 and 200 respectively.
+
+```{python}
+#| label: tbl-best-mae
+#| tbl-cap: Hyperparameter combinations with the best MAEs
+
+rf_df.sort_values(['mae'], ascending=True, inplace=True)
+Markdown(rf_df.head(10).to_markdown(index=False))
+```
+
+Given that the best-MAE model has a signicantly better MAE (3.6056) when compared to that of the best-R^2 model (3.7601), and the difference in R^2 is small (0.1319 for the best-MAE model vs 0.1324 for the best-R^2 model), we choose the best-MAE model.
+
+```{python}
+#| label: tbl-rf-hyperparams
+#| tbl-cap: Optimal hyperparameter values for random forest
+
+xgb_table = [
+  ['max_features', '1/3'],
+  ['n_estimators', '200'],
+  ['min_samples_split', '50'],
+  ['min_samples_leaf', '1']
+]
+
+Markdown(tabulate(
+  xgb_table, headers=['Hyperparameter', 'Optimal Value']
+))
+```
+
+# XGBoost
+
+We try several values of n_estimator, max_depth, learning_rate, and reg_alpha:
+
+```{python}
+xgb_results = []
+
+for ne in [100, 200, 500]:
+  for md in [3, 5, 7]:
+    for lr in [0.1, 1, 2]:
+      for ra in [0, 0.2, 1]:
+        # See https://xgboost.readthedocs.io/en/stable/parameter.html and https://xgboost.readthedocs.io/en/stable/python/python_api.html#module-xgboost.sklearn
+        xgb_mod = XGBRegressor(
+          n_estimators=ne,
+          max_depth=md,
+          learning_rate=lr,
+          reg_alpha=ra,
+          seed=11
+        )
+
+        xgb_mod.fit(X_train, y_train)
+        y_pred = xgb_mod.predict(X_val)
+
+        xgb_results.append({
+          'n_estimators': ne,
+          'max_depth': md,
+          'learning_rate': lr,
+          'reg_alpha': ra,
+          'r2_score': r2_score(y_val, y_pred),
+          'rmse': root_mean_squared_error(y_val, y_pred),
+          'mae': mean_absolute_error(y_val, y_pred)
+        })
+```
+
+```{python}
+xgb_df = pd.DataFrame(xgb_results)
+xgb_df.to_csv('tuning/xgb_df.csv')
+```
+
+We look at the XGBoost hyperparameter settings that yielded the best R^2 scores; unfortunately, the best R^2 score of 0.1056 is somewhat worse than that of the optimal (best-MAE) random forest model.
+
+```{python}
+#| label: tbl-xgb-best-r2
+#| tbl-cap: XGBoost hyperparameter combinations with the best R^2 scores
+
+xgb_df.sort_values(['r2_score'], ascending=False, inplace=True)
+Markdown(xgb_df.head(10).to_markdown(index=False))
+```
+
+We then examine the ten best XGBoost models with respect to RMSE. As with random forest, we note that the lowest-RMSE models are the same as the highest-R^2 models.
+
+```{python}
+#| label: tbl-xgb-best-rmse
+#| tbl-cap: XGBoost hyperparameter combinations with the best RMSEs
+
+xgb_df.sort_values(['rmse'], ascending=True, inplace=True)
+Markdown(xgb_df.head(10).to_markdown(index=False))
+```
+
+Finally, we note that the best-MAE XGBoost model has an MAE of 3.6242 minutes and an R^2 of 0.0703, whereas the model with the highest R^2 (and lowest RMSE) has an MAE of 3.6313 minutes and an R^2 of 0.1056. Since the relative difference in R^2 is much greater than the difference in MAE, we choose the best-R^2 model.
+
+```{python}
+#| label: tbl-xgb-best-mae
+#| tbl-cap: XGBoost hyperparameter combinations with the best MAEs
+
+xgb_df.sort_values(['mae'], ascending=True, inplace=True)
+Markdown(xgb_df.head(10).to_markdown(index=False))
+```
+
+```{python}
+#| label: tbl-xgb-hyperparams
+#| tbl-cap: Optimal hyperparameter values for XGBoost
+
+xgb_table = [
+  ['n_estimators', '100'],
+  ['max_depth', '7'],
+  ['learning_rate', '0.1'],
+  ['reg_alpha', '1']
+]
+
+Markdown(tabulate(
+  xgb_table, headers=['Hyperparameter', 'Optimal Value']
+))
+```
