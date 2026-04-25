@@ -13,7 +13,7 @@ echo: false
 
 <!--See https://quarto.org/docs/get-started/authoring/neovim.html for inline LaTeX information-->
 
-The PDF version of this report is available for download [here](https://nevin-11.github.io/jsc370-project/project_pdf.pdf). Meanwhile, the project repository, including all static datasets and the README file, is located [here](https://github.com/nevin-11/nevin-11.github.io/tree/main/project).
+The PDF version of this report is available for download [here](https://nevin-11.github.io/jsc370-project/project_pdf.pdf). Meanwhile, the project repository, including all static datasets and the README file, is located [here](https://github.com/nevin-11/nevin-11.github.io/tree/main/jsc370-project).
 
 # Introduction
 
