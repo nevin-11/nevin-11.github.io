@@ -145,13 +145,11 @@ We then obtain the unofficial station co-ordinate (longtitude and latitude) data
 We then use Google Maps to obtain the co-ordinates for the Line 1 Vaughan extension station. Finally, we concatenate the four sets of data (Line 1, Line 2, Line 4, and the Line 1 extension) into a single dataframe containing the co-ordinates of all heavy-rail TTC stations.
 
 ```{python}
-# See https://scruss.com/blog/2005/12/14/toronto-subway-station-gps-locations/
+# See https://scruss.com/blog/2005/12/14/toronto-subway-station-gps-locations/ for dataset information and links
 
-line_1_coords = pd.read_csv('https://scruss.com/wordpress/wp-content/yonge-university-spadina-NAD83.csv', names = ['lat', 'long', 'station'])
-
-line_2_coords = pd.read_csv('https://scruss.com/wordpress/wp-content/bloor-danforth-NAD83.csv', names = ['lat', 'long', 'station'])
-
-line_4_coords = pd.read_csv('https://scruss.com/wordpress/wp-content/sheppard-yonge-NAD83.csv', names = ['lat', 'long', 'station'])
+line_1_coords = pd.read_csv('data/yonge-university-spadina-NAD83.csv', names = ['lat', 'long', 'station'])
+line_2_coords = pd.read_csv('data/bloor-danforth-NAD83.csv', names = ['lat', 'long', 'station'])
+line_4_coords = pd.read_csv('data/sheppard-yonge-NAD83.csv', names = ['lat', 'long', 'station'])
 
 # Use line 1 co-ordinates for interchanges
 interchange_1_2 = line_2_coords.loc[line_2_coords.station.isin(['Spadina', 'St George', 'Yonge'])].index

@@ -61,9 +61,9 @@ from tabulate import tabulate
 from sklearn.metrics import mean_absolute_error, \
   root_mean_squared_error, r2_score
 
-# See https://stackoverflow.com/questions/45761893/exporting-jupyter-notebook-to-pdf-with-offline-plotly-graph-missing-graphs
+# See https://stackoverflow.com/questions/45761893/exporting-jupyter-notebook-to-pdf-with-offline-plotly-graph-missing-graphs and https://github.com/orgs/quarto-dev/discussions/5264
 import plotly.io as pio
-pio.renderers.default = 'notebook+pdf'
+pio.renderers.default = 'pdf'
 
 # See https://python-visualization.github.io/folium/latest/user_guide/plugins/marker_cluster.html
 import folium.plugins
@@ -148,13 +148,11 @@ We then obtain the unofficial *scruss* station co-ordinate (longtitude and latit
 We then use Google Maps to obtain the co-ordinates for the Line 1 Vaughan extension station. Finally, we concatenate the four sets of data (Line 1, Line 2, Line 4, and the Line 1 extension) into a single dataframe containing the co-ordinates of all heavy-rail TTC stations.
 
 ```{python}
-# See https://scruss.com/blog/2005/12/14/toronto-subway-station-gps-locations/
+# See https://scruss.com/blog/2005/12/14/toronto-subway-station-gps-locations/ for dataset information and links
 
-line_1_coords = pd.read_csv('https://scruss.com/wordpress/wp-content/yonge-university-spadina-NAD83.csv', names = ['lat', 'long', 'station'])
-
-line_2_coords = pd.read_csv('https://scruss.com/wordpress/wp-content/bloor-danforth-NAD83.csv', names = ['lat', 'long', 'station'])
-
-line_4_coords = pd.read_csv('https://scruss.com/wordpress/wp-content/sheppard-yonge-NAD83.csv', names = ['lat', 'long', 'station'])
+line_1_coords = pd.read_csv('data/yonge-university-spadina-NAD83.csv', names = ['lat', 'long', 'station'])
+line_2_coords = pd.read_csv('data/bloor-danforth-NAD83.csv', names = ['lat', 'long', 'station'])
+line_4_coords = pd.read_csv('data/sheppard-yonge-NAD83.csv', names = ['lat', 'long', 'station'])
 
 # Use line 1 co-ordinates for interchanges
 interchange_1_2 = line_2_coords.loc[line_2_coords.station.isin(['Spadina', 'St George', 'Yonge'])].index
@@ -945,12 +943,14 @@ We now use boxplots to visualize the two features (line and weekday-weekend diff
 We note that although the median delay length is five minutes within each subway line, their distributions significantly differ. Specifically, Line 4 Sheppard delays tend to be more concentrated about the five-minute median (hence its box on the boxplot being more narrow). On the other hand, Line 1 Yonge-University seems to have many outlier delay times, since the boxplot shows many close-together dots (outliers) for that subway line.
 
 ```{python}
-#| label: fig-delay-lines
-#| fig-cap: Impact of the subway line on delay times
-
 # Impart an order (1, 2, then 4) to the lines
 # See https://pandas.pydata.org/docs/user_guide/categorical.html#sorting-and-order and https://pandas.pydata.org/docs/reference/api/pandas.Categorical.reorder_categories.html#pandas.Categorical.reorder_categories
 df.Line = df.Line.cat.reorder_categories([1, 2, 4], ordered=True)
+```
+
+```{python}
+#| label: fig-delay-lines
+#| fig-cap: Impact of the subway line on delay times
 
 # category_orders means the graph would respect category order (1, 2, 4)
 # See https://stackoverflow.com/questions/68348141/wrong-order-of-values-on-x-axes-when-build-charts-with-groups-using-plotly-py
@@ -1218,7 +1218,7 @@ fig.update_layout(
     margin=dict(
         l=0,
         r=0,
-        b=100,
+        b=150,
         t=50
     )
 )
