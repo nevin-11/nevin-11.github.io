@@ -817,7 +817,7 @@ sns.kdeplot(
 
 The following table presents summary statistics for the delay lengths, both at a per-delay and a per-station level; the latter means that we only consider the mean delay duration at each subway station. Since Bayview staion has in fact had no delays within the dataset, we will *not* factor that station into consideration when calculating summary statistics at a per-station level; this is to avoid distorting the statistics.
 
-We note that per-station average delay times has become much less dispersed once we remove North York Centre station from consideration. Given that there is only one delay in the dataset associated with that station, we can safely consider that station to be an outlier.
+We note that per-station average delay times has become much less dispersed once we remove North York Centre station from consideration. Given that there is only one delay in the dataset which is associated with that station, we can safely consider that station to be an outlier.
 
 ```{python}
 #| label: tbl-min-delay-clean
@@ -870,7 +870,7 @@ Markdown(tabulate(
 ))
 ```
 
-Finally, from the map below, we observe that several terminus stations (i.e. Kipling, Kennedy, and Finch) have many associated delays, alongside transfer stations between Lines 1 and 2 (except Spadina) and other stations (e.g. Wilson and Eglinton).
+Finally, the following maps shows the number of delays, as well as the mean delay length, for every station. We could observe that several terminus stations (i.e. Kipling, Kennedy, and Finch) have many associated delays, alongside transfer stations between Lines 1 and 2 (except Spadina) and other stations (e.g. Wilson and Eglinton).
 
 This propensity for delays at those stations may be attributed to their high ridership and importance within the TTC ecosystem. For instance, Kennedy station is a hub to many Scarborough bus routes, and Eglinton station had already been busy before Line 5 opened.
 
@@ -1123,7 +1123,7 @@ fig.update_yaxes(type='category')
 fig.show()
 ```
 
-Also, although the median delay length is five minutes for both weekdays and weekends, weekend delays indeed tend to be longer, as seen with the weekend box being further to the right than the weekday box in the boxplot below.
+Also, we consider the following boxplot, which shows the difference in delay duration distributions with respect to weekdays and weekends. Although the median delay length is five minutes for both weekdays and weekends, weekend delays indeed tend to be longer, as seen with the weekend box being further to the right than the weekday box in the boxplot below.
 
 ```{python}
 #| label: fig-delay-weekday-weekend
@@ -1267,6 +1267,8 @@ Markdown(
 We choose the random forest model since it performed better across all of the three pre-determined metrics: $R^2$, RMSE, and MAE.
 
 ### Feature Importance and Interpretation
+
+The following is a feature importance plot, identifying the most influential features with respect to the random forest model fitted above.
 
 ```{python}
 # See Week 8 Slide 54 (https://jsc370.github.io/JSC370-2026/slides/08-ml2/JSC370-slides-08.html#/xgboost-variable-importance) and https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.reset_index.html
