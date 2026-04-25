@@ -143,15 +143,20 @@ df.drop(
 )
 ```
 
-We then obtain the unofficial *scruss* station co-ordinate (longtitude and latitude) datasets via the links embedded in [this blog post](https://scruss.com/blog/2005/12/14/toronto-subway-station-gps-locations/) on the *We Saw a Chicken...* blog. We then use Pandas' *read_csv* function to store the co-ordinates as Pandas dataframes, passing in one URL (i.e. one line) at a time.
+We then obtain the unofficial *scruss* station co-ordinate (longtitude and latitude) datasets via the links embedded in [this post](https://scruss.com/blog/2005/12/14/toronto-subway-station-gps-locations/) on the *We Saw a Chicken...* blog. We then use Pandas' *read_csv* function to store the co-ordinates as Pandas dataframes, passing in one URL (i.e. one line) at a time.
 
 We then use Google Maps to obtain the co-ordinates for the Line 1 Vaughan extension station. Finally, we concatenate the four sets of data (Line 1, Line 2, Line 4, and the Line 1 extension) into a single dataframe containing the co-ordinates of all heavy-rail TTC stations.
 
 ```{python}
 # See https://scruss.com/blog/2005/12/14/toronto-subway-station-gps-locations/ for dataset information and links
 
+# See http://scruss.com/wordpress/wp-content/yonge-university-spadina-NAD83.csv
 line_1_coords = pd.read_csv('data/yonge-university-spadina-NAD83.csv', names = ['lat', 'long', 'station'])
+
+# See http://scruss.com/wordpress/wp-content/bloor-danforth-NAD83.csv
 line_2_coords = pd.read_csv('data/bloor-danforth-NAD83.csv', names = ['lat', 'long', 'station'])
+
+# See http://scruss.com/wordpress/wp-content/sheppard-yonge-NAD83.csv
 line_4_coords = pd.read_csv('data/sheppard-yonge-NAD83.csv', names = ['lat', 'long', 'station'])
 
 # Use line 1 co-ordinates for interchanges
