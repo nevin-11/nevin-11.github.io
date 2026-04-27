@@ -696,7 +696,7 @@ fig.update_traces(
 fig.show()
 ```
 
-### Distribution of Delays for Different Days of the Week
+### Distribution of Delays for Weekdays versus Weekends
 
 We observe that 78% of the 2025 delays occurred during a weekday, more than the 71% (5/7) that we would expect if the number of delays are equally distributed across the days of the week. We also note that the mean weekday delay duration is lower; we will further explore this observation in the next section.
 
