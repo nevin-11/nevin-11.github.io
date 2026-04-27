@@ -143,9 +143,9 @@ df.drop(
 )
 ```
 
-We then obtain the unofficial *scruss* station co-ordinate (longtitude and latitude) datasets via the links embedded in [this post](https://scruss.com/blog/2005/12/14/toronto-subway-station-gps-locations/) on the *We Saw a Chicken...* blog. We then use Pandas' *read_csv* function to store the co-ordinates as Pandas dataframes, passing in one URL (i.e. one line) at a time.
+We then obtain the station co-ordinates (longtitude and latitude) from unofficial datasets located on the *We Saw a Chicken...* blog (please see [this post](https://scruss.com/blog/2005/12/14/toronto-subway-station-gps-locations/) for details). We then use Pandas' *read_csv* function to store the co-ordinates as Pandas dataframes, passing in one URL (i.e. one line) at a time.
 
-We then use Google Maps to obtain the co-ordinates for the Line 1 Vaughan extension station. Finally, we concatenate the four sets of data (Line 1, Line 2, Line 4, and the Line 1 extension) into a single dataframe containing the co-ordinates of all heavy-rail TTC stations.
+Next, we use Google Maps to obtain the co-ordinates for the Line 1 Vaughan extension stations. Finally, we concatenate the four sets of data (Line 1, Line 2, Line 4, and the Line 1 extension) into a single dataframe containing the co-ordinates of all heavy-rail TTC stations.
 
 ```{python}
 # See https://scruss.com/blog/2005/12/14/toronto-subway-station-gps-locations/ for dataset information and links
@@ -937,9 +937,9 @@ Due to the high p-value of 0.733, we fail to reject the null hypothesis with res
 
 In addition, although we reject the null hypothesis for the ridership t-test due to the p-value of 0.017, thus concluding that there is a linear relationship between station ridership and delay length, we note that the slope of $-3.48*10^{-6}$ is so small to the extent that ridership has a negligible impact on delay lengths. The Pearson r-value of -0.026 also corroborates the notion that ridership and delay length are *de facto* unrelated.
 
-On the other hand, the Mann-Whitney U-test for the weekday-weekend difference has a convincingly low p-value of $4.98*10^{11}$. We therefore reject the null hypothesis that the distribution of weekday and weekend delay times are the same; in other words, the difference between the weekday and weekend delay times is statistically significant. We note that per the above section, weekend delays tend to be longer.
+On the other hand, the Mann-Whitney U-test for the weekday-weekend difference has a convincingly low p-value of $4.98*10^{-11}$. We therefore reject the null hypothesis that the distribution of weekday and weekend delay times are the same; in other words, the difference between the weekday and weekend delay times is statistically significant. We note that per the above section, weekend delays tend to be longer.
 
-In addition, the Kruskal-Wallis H-test for subway lines also has a extremely low p-value ($8.05*10^{-8}$). Therefore, we also reject the null with regard to the subway lines.
+In addition, the Kruskal-Wallis H-test for subway lines also has a extremely low p-value ($8.05*10^{-8}$). Therefore, we also reject the null with regard to the subway lines, and conclude that the median delay length is *not* identical across the three subway lines.
 
 ## Boxplots
 

@@ -1082,7 +1082,7 @@ Due to the high p-value of 0.733, we fail to reject the null hypothesis with res
 
 In addition, although we reject the null hypothesis for the ridership t-test due to the p-value of 0.017, thus concluding that there is a linear relationship between station ridership and delay length, we note that the slope of $-3.48*10^{-6}$ is so small to the extent that ridership has a negligible impact on delay lengths. The Pearson r-value of -0.026 also corroborates the notion that ridership and delay length are *de facto* unrelated.
 
-On the other hand, the Mann-Whitney U-test for the weekday-weekend difference has a convincingly low p-value of $4.98*10^{11}$. We therefore reject the null hypothesis that the distribution of weekday and weekend delay times are the same. In other words, the difference between the weekday and weekend delay times is statistically significant, and recall that weekend delays tend to be longer per the previous section.
+On the other hand, the Mann-Whitney U-test for the weekday-weekend difference has a convincingly low p-value of $4.98*10^{-11}$. We therefore reject the null hypothesis that the distribution of weekday and weekend delay times are the same. In other words, the difference between the weekday and weekend delay times is statistically significant, and recall that weekend delays tend to be longer per the previous section.
 
 In addition, the Kruskal-Wallis H-test for subway lines also has a extremely low p-value ($8.05*10^{-8}$). Therefore, we also reject the null with regard to the subway lines, and conclude that the median delay length is *not* uniform across lines 1, 2, and 4.
 
